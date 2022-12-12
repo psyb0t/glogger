@@ -75,7 +75,7 @@ func (l logger) Fatal(v ...interface{}) {
 
 func (l logger) print(lvl LogLevel, v ...interface{}) {
 	d := map[string]interface{}{
-		"time":     time.RFC3339,
+		"time":     time.Now().Format(time.RFC3339),
 		"logLevel": logLevelString[lvl],
 		"caller":   l.caller.String(),
 		"value":    v,
