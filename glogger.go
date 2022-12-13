@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // LogFormat represents the format of a log message
@@ -38,6 +39,18 @@ var logLevelString = map[LogLevel]string{
 	LogLevelWarn:  "WARN",
 	LogLevelError: "ERROR",
 	LogLevelFatal: "FATAL",
+}
+
+// StrToLogLevel matches the given string to a supported LogLevel.
+// If no matches are found it returns LogLevelDebug
+func StrToLogLevel(str string) LogLevel {
+	for k, v := range logLevelString {
+		if strings.ToLower(str) == strings.ToLower(v) {
+			return k
+		}
+	}
+
+	return LogLevelDebug
 }
 
 var (

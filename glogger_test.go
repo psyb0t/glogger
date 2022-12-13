@@ -6,6 +6,27 @@ import (
 	"testing"
 )
 
+func TestStrToLogLevel(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected LogLevel
+	}{
+		{"DEBUG", LogLevelDebug},
+		{"Info", LogLevelInfo},
+		{"warn", LogLevelWarn},
+		{"error", LogLevelError},
+		{"fatal", LogLevelFatal},
+		{"invalid", LogLevelDebug},
+	}
+
+	for _, test := range tests {
+		result := StrToLogLevel(test.input)
+		if result != test.expected {
+			t.Errorf("StrToLogLevel(%q) = %d, expected %d", test.input, result, test.expected)
+		}
+	}
+}
+
 func TestSetLogFormat(t *testing.T) {
 	tests := []struct {
 		name     string

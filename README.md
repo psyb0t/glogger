@@ -54,6 +54,10 @@ logger.Fatal("this is a fatal message")
 The `glogger` package also provides a few global functions to customize the behavior of the logger:
 
 ```golang
+// StrToLogLevel matches the given string to a supported LogLevel.
+// If no matches are found it returns LogLevelDebug
+func StrToLogLevel(str string) LogLevel
+
 // SetLogFormat sets the global variable that controls
 // the format of the log lines being printed
 func SetLogFormat(format LogFormat)
