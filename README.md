@@ -39,7 +39,7 @@ logger := glogger.New(glogger.Caller{Package: "github.com/user/pkg", Receiver: "
 
 The `logger` struct has the following fields:
 
-- `caller`: the `Caller` object that provides information about the caller of the logger method (package name, receiver name, and function name).
+- `caller`: the `Caller` object that provides information about the caller of the logger method (service, package, receiver, and function name).
 
 Once you have created an instance of the logger struct, you can use its methods to log messages at different severity levels:
 
