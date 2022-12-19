@@ -67,8 +67,15 @@ func SetLogFormat(format LogFormat) {
 
 // SetLogLevel sets the global variable that controls
 // the minimum severity level required for a message to
-// pass through
+// pass through. If an invalid value is passed
+// it sets it to LogLevelDebug
 func SetLogLevel(level LogLevel) {
+	if level > LogLevelFatal {
+		logLevel = LogLevelDebug
+
+		return
+	}
+
 	logLevel = level
 }
 
