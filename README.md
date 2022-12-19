@@ -1,5 +1,10 @@
 # glogger
 
+[![codecov](https://codecov.io/gh/psyb0t/glogger/branch/master/graph/badge.svg?token=QG0NA3QE7I)](https://codecov.io/gh/psyb0t/glogger)
+[![goreportcard](https://goreportcard.com/badge/github.com/psyb0t/glogger)](https://goreportcard.com/report/github.com/psyb0t/glogger)
+[![test](https://github.com/psyb0t/glogger/actions/workflows/test.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/test.yml)
+[![golangci-lint](https://github.com/psyb0t/glogger/actions/workflows/lint.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/lint.yml)
+
 This package provides a simple logging library for Go programs.
 
 ## Installation
