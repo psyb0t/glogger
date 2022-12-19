@@ -45,7 +45,7 @@ var logLevelString = map[LogLevel]string{
 // If no matches are found it returns LogLevelDebug
 func StrToLogLevel(str string) LogLevel {
 	for k, v := range logLevelString {
-		if strings.ToLower(str) == strings.ToLower(v) {
+		if strings.EqualFold(str, v) {
 			return k
 		}
 	}
@@ -78,14 +78,13 @@ func SetLogLevel(level LogLevel) {
 // For example, the following code configures the logger to write messages
 // to a file named "app.log":
 //
-//     f, err := os.OpenFile("app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-//     if err != nil {
-//         log.Fatalf("error opening file: %v", err)
-//     }
-//     defer f.Close()
+//	f, err := os.OpenFile("app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+//	if err != nil {
+//	    log.Fatalf("error opening file: %v", err)
+//	}
+//	defer f.Close()
 //
-//     glogger.SetOutput(f)
-//
+//	glogger.SetOutput(f)
 func SetOutput(o io.Writer) {
 	output = o
 }
