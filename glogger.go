@@ -1,3 +1,17 @@
+// Package glogger provides a logger that can be used to write log messages
+// to an output destination, such as the standard output or a file. It has
+// various levels of log severity (e.g. debug, info, warning, error, fatal)
+// and the following formats: inline-string, json.
+//
+// The global variables output, logFormat, and logLevel control the output
+// destination, format, and minimum severity level of log messages,
+// respectively. You can set these variables using the functions SetOutput,
+// SetLogFormat, and SetLogLevel.
+//
+// The function _print writes the given message to the output destination.
+// The functions Debug, Info, Warn, Error, and Fatal write log messages
+// with the corresponding severity levels, if the log level of the message
+// is equal to or higher than the minimum log level set.
 package glogger
 
 import (
@@ -10,29 +24,31 @@ import (
 // LogFormat represents the format of a log message
 type LogFormat uint8
 
+// Constants representing the available log formats.
 const (
-	// LogFormatDefault is the default log format
-	LogFormatDefault LogFormat = iota
-	// LogFormatJSON is the JSON log format
+	LogFormatInlineString LogFormat = iota // (default)
 	LogFormatJSON
 )
+
+// logFormatString is a map of LogFormat constants to their string representations.
+var logFormatString = map[LogFormat]string{
+	LogFormatInlineString: "inline-string",
+	LogFormatJSON:         "json",
+}
 
 // LogLevel is the type that represents the log level
 type LogLevel uint8
 
+// Constants representing the available log levels.
 const (
-	// LogLevelDebug is the debug log level
 	LogLevelDebug LogLevel = iota
-	// LogLevelInfo is the info log level
 	LogLevelInfo
-	// LogLevelWarn is the warning log level
 	LogLevelWarn
-	// LogLevelError is the error log level
 	LogLevelError
-	// LogLevelFatal is the fatal log level
 	LogLevelFatal
 )
 
+// logLevelString is a map of LogLevel constants to their string representations.
 var logLevelString = map[LogLevel]string{
 	LogLevelDebug: "DEBUG",
 	LogLevelInfo:  "INFO",
@@ -53,9 +69,21 @@ func StrToLogLevel(str string) LogLevel {
 	return LogLevelDebug
 }
 
+// StrToLogFormat matches the given string to a supported LogFormat.
+// If no matches are found it returns LogFormatInlineString
+func StrToLogFormat(str string) LogFormat {
+	for k, v := range logFormatString {
+		if strings.EqualFold(str, v) {
+			return k
+		}
+	}
+
+	return LogFormatInlineString
+}
+
 var (
 	output    io.Writer = os.Stdout
-	logFormat LogFormat = LogFormatDefault
+	logFormat LogFormat = LogFormatInlineString
 	logLevel  LogLevel  = LogLevelDebug
 )
 

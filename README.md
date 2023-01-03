@@ -5,7 +5,7 @@
 [![test](https://github.com/psyb0t/glogger/actions/workflows/test.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/test.yml)
 [![golangci-lint](https://github.com/psyb0t/glogger/actions/workflows/lint.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/lint.yml)
 
-This package provides a simple logging library for Go programs.
+glogger is a Go package that provides a logger that can be used to write log messages to an output destination, such as the standard output or a file. It has various levels of log severity (e.g. debug, info, warning, error, fatal) and supports two formats: inline-string and JSON.
 
 ## Installation
 
@@ -15,78 +15,20 @@ To install glogger, run:
 
 ## Usage
 
-The glogger package defines the `Logger` interface, which has the following methods:
+The global variables `output`, `logFormat`, and `logLevel` control the output destination, format, and minimum severity level of log messages, respectively. You can set these variables using the functions `SetOutput`, `SetLogFormat`, and `SetLogLevel`.
 
-```golang
-type Logger interface {
-	// Debug logs a message at the debug severity level.
-	Debug(v ...interface{})
+To create a new logger, use the `New` function and pass in a `Caller` struct that contains the caller information (e.g. service, package, receiver, function). The `Logger` interface provides methods for logging messages at different severity levels: `Debug`, `Info`, `Warn`, `Error`, and `Fatal`.
 
-	// Info logs a message at the info severity level.
-	Info(v ...interface{})
-
-	// Warn logs a message at the warning severity level.
-	Warn(v ...interface{})
-
-	// Error logs a message at the error severity level.
-	Error(v ...interface{})
-
-	// Fatal logs a message at the fatal severity level and terminates the program.
-	Fatal(v ...interface{})
-}
-```
-
-To use the logger, you need to create an instance of the `logger` struct, which implements the `Logger` interface. For example:
-
-```golang
-logger := glogger.New(glogger.Caller{Package: "github.com/user/pkg", Receiver: "foo", Function: "bar"})
-```
-
-The `logger` struct has the following fields:
-
-- `caller`: the `Caller` object that provides information about the caller of the logger method (service, package, receiver, and function name).
-
-Once you have created an instance of the logger struct, you can use its methods to log messages at different severity levels:
-
-```golang
-logger.Debug("this is a debug message")
-logger.Info("this is an info message")
-logger.Warn("this is a warning message")
-logger.Error("this is an error message")
-logger.Fatal("this is a fatal message")
-```
-
-The `glogger` package also provides a few global functions to customize the behavior of the logger:
-
-```golang
-// StrToLogLevel matches the given string to a supported LogLevel.
-// If no matches are found it returns LogLevelDebug
-func StrToLogLevel(str string) LogLevel
-
-// SetLogFormat sets the global variable that controls
-// the format of the log lines being printed
-func SetLogFormat(format LogFormat)
-
-// SetLogLevel sets the global variable that controls
-// the minimum severity level required for a message to
-// pass through
-func SetLogLevel(level LogLevel)
-
-// SetOutput sets the global variable that specifies the output writer
-// where log messages will be written.
-func SetOutput(o io.Writer)
-```
-
-The `SetLogFormat` function allows you to specify the format of the log lines being printed (default or JSON). The `SetLogLevel` function allows you to specify the minimum severity level required for a message to pass through (e.g., only log messages with severity level `Error` or higher). And the `SetOutput` function allows you to specify the output writer where log messages will be written (e.g., a file, the standard output, etc.).
+The `Err`, `RequestID`, `TraceID`, `SpanID`, and `Data` methods can be used to add extra data to the log entry. The `Err` method sets the error field in the log entry to the given value. The `RequestID`, `TraceID`, and `SpanID` methods set the corresponding fields in the log entry to the given values. The `Data` method adds a data field to the log entry as key => val.
 
 ## Example
-
-Here is a complete example of how to use the `glogger` package to log messages to a file named `app.log`:
 
 ```golang
 package main
 
 import (
+	"errors"
+	"fmt"
 	"os"
 
 	"github.com/psyb0t/glogger"
@@ -109,22 +51,23 @@ func main() {
 	glogger.SetLogLevel(glogger.LogLevelInfo)
 
 	// Create a logger instance.
-	logger := glogger.New(glogger.Caller{Package: "github.com/user/pkg", Receiver: "foo", Function: "bar"})
+	logger := glogger.New(glogger.Caller{Service: "my-service", Package: "main", Function: "main"})
 
-	// Log messages at different severity levels.
-	logger.Debug("hello world")
-	logger.Info("hello world")
-	logger.Warn("hello world")
-	logger.Error("hello world")
-	logger.Fatal("hello world")
+	// Log messages at different severity levels with various extra data.
+	logger.RequestID("abc123").Debug("hello world")
+	logger.TraceID("zzzsss").Info("hello world")
+	logger.TraceID("zzzsss").SpanID("123456").Warn("hello world")
+	logger.Err(errors.New("something bad happened")).Error("hello world")
+	logger.Data("key", "value").Fatal("hello world")
 }
 ```
 
 The log file `app.log` will contain the following messages:
 
 ```
-{"time":"2022-12-11T17:19:49+01:00","logLevel":"INFO","caller":"github.com/user/pkg:foo.bar","value":["hello world"]}
-{"time":"2022-12-11T17:19:49+01:00","logLevel":"WARN","caller":"github.com/user/pkg:foo.bar","value":["hello world"]}
-{"time":"2022-12-11T17:19:49+01:00","logLevel":"ERROR","caller":"github.com/user/pkg:foo.bar","value":["hello world"]}
-{"time":"2022-12-11T17:19:49+01:00","logLevel":"FATAL","caller":"github.com/user/pkg:foo.bar","value":["hello world"]}
+{"time":"2023-01-03T00:00:00Z","level":"DEBUG","message":"hello world","requestID":"abc123"}
+{"time":"2023-01-03T00:00:00Z","level":"INFO","message":"hello world","traceID":"zzzsss"}
+{"time":"2023-01-03T00:00:00Z","level":"WARN","message":"hello world","traceID":"zzzsss","spanID":"123456"}
+{"time":"2023-01-03T00:00:00Z","level":"ERROR","message":"hello world","error":"something bad happened"}
+{"time":"2023-01-03T00:00:00Z","level":"FATAL","message":"hello world","data":{"key":"value"}}
 ```
