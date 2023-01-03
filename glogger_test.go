@@ -35,8 +35,8 @@ func TestSetLogFormat(t *testing.T) {
 	}{
 		{
 			name:     "default format",
-			format:   LogFormatDefault,
-			expected: LogFormatDefault,
+			format:   LogFormatInlineString,
+			expected: LogFormatInlineString,
 		},
 		{
 			name:     "JSON format",
