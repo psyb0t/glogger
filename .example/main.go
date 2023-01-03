@@ -36,9 +36,8 @@ func main() {
 }
 
 /*
-{"time":"2023-01-03T00:00:00Z","level":"DEBUG","message":"hello world","requestID":"abc123"}
-{"time":"2023-01-03T00:00:00Z","level":"INFO","message":"hello world","traceID":"zzzsss"}
-{"time":"2023-01-03T00:00:00Z","level":"WARN","message":"hello world","traceID":"zzzsss","spanID":"123456"}
-{"time":"2023-01-03T00:00:00Z","level":"ERROR","message":"hello world","error":"something bad happened"}
-{"time":"2023-01-03T00:00:00Z","level":"FATAL","message":"hello world","data":{"key":"value"}}
+{"service":"my-service","package":"main","function":"main","time":"2023-01-04T00:50:04+02:00","level":"INFO","message":"hello world","requestID":"abc123","traceID":"zzzsss"}
+{"service":"my-service","package":"main","function":"main","time":"2023-01-04T00:50:04+02:00","level":"WARN","message":"hello world","traceID":"zzzsss","spanID":"123456"}
+{"service":"my-service","package":"main","function":"main","time":"2023-01-04T00:50:04+02:00","level":"ERROR","message":"hello world","error":"something bad happened"}
+{"service":"my-service","package":"main","function":"main","time":"2023-01-04T00:50:04+02:00","level":"FATAL","message":"hello world","data":{"key":"value"}}
 */
