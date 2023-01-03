@@ -33,6 +33,7 @@ type Logger interface {
 }
 
 type logEntry struct {
+	Caller
 	Time      string                 `json:"time,omitempty"`
 	Level     string                 `json:"level,omitempty"`
 	Message   string                 `json:"message,omitempty"`
@@ -130,6 +131,7 @@ func (l *logger) print(lvl LogLevel, msg string) {
 		l.entry = logEntry{}
 	}()
 
+	l.entry.Caller = l.caller
 	l.entry.Time = time.Now().Format(time.RFC3339)
 	l.entry.Level = logLevelString[lvl]
 	l.entry.Message = msg
