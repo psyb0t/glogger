@@ -2,8 +2,7 @@
 
 [![codecov](https://codecov.io/gh/psyb0t/glogger/branch/master/graph/badge.svg?token=QG0NA3QE7I)](https://codecov.io/gh/psyb0t/glogger)
 [![goreportcard](https://goreportcard.com/badge/github.com/psyb0t/glogger)](https://goreportcard.com/report/github.com/psyb0t/glogger)
-[![test](https://github.com/psyb0t/glogger/actions/workflows/test.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/test.yml)
-[![golangci-lint](https://github.com/psyb0t/glogger/actions/workflows/lint.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/lint.yml)
+[![pipeline](https://github.com/psyb0t/glogger/actions/workflows/pipeline.yml/badge.svg)](https://github.com/psyb0t/glogger/actions/workflows/pipeline.yml)
 
 glogger is a Go package that provides a logger that can be used to write log messages to an output destination, such as the standard output or a file. It has various levels of log severity (e.g. debug, info, warning, error, fatal) and supports two formats: inline-string and JSON.
 
