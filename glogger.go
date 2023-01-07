@@ -21,21 +21,6 @@ import (
 	"strings"
 )
 
-// LogFormat represents the format of a log message
-type LogFormat uint8
-
-// Constants representing the available log formats.
-const (
-	LogFormatInlineString LogFormat = iota // (default)
-	LogFormatJSON
-)
-
-// logFormatString is a map of LogFormat constants to their string representations.
-var logFormatString = map[LogFormat]string{
-	LogFormatInlineString: "inline-string",
-	LogFormatJSON:         "json",
-}
-
 // LogLevel is the type that represents the log level
 type LogLevel uint8
 
@@ -67,6 +52,21 @@ func StrToLogLevel(str string) LogLevel {
 	}
 
 	return LogLevelDebug
+}
+
+// LogFormat represents the format of a log message
+type LogFormat uint8
+
+// Constants representing the available log formats.
+const (
+	LogFormatInlineString LogFormat = iota // (default)
+	LogFormatJSON
+)
+
+// logFormatString is a map of LogFormat constants to their string representations.
+var logFormatString = map[LogFormat]string{
+	LogFormatInlineString: "inline-string",
+	LogFormatJSON:         "json",
 }
 
 // StrToLogFormat matches the given string to a supported LogFormat.
