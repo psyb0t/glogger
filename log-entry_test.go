@@ -4,10 +4,32 @@ import (
 	"bytes"
 	"errors"
 	"strings"
+	"sync"
 	"testing"
 )
 
-func TestLogger(t *testing.T) {
+type mutexBuffer struct {
+	b bytes.Buffer
+	m sync.Mutex
+}
+
+func (b *mutexBuffer) Read(p []byte) (n int, err error) {
+	b.m.Lock()
+	defer b.m.Unlock()
+	return b.b.Read(p)
+}
+func (b *mutexBuffer) Write(p []byte) (n int, err error) {
+	b.m.Lock()
+	defer b.m.Unlock()
+	return b.b.Write(p)
+}
+func (b *mutexBuffer) String() string {
+	b.m.Lock()
+	defer b.m.Unlock()
+	return b.b.String()
+}
+
+func TestLogEntry(t *testing.T) {
 	t.Run("test data and metadata setters", func(t *testing.T) {
 		testDataKey := "key"
 
@@ -51,25 +73,27 @@ func TestLogger(t *testing.T) {
 
 		for _, test := range tests {
 			t.Run(test.name, func(t *testing.T) {
-				l := &logger{}
-				test.method(l)
+				var l Logger
+				l = logEntry{}
+				l = test.method(l)
+
+				entry := l.(logEntry)
 
 				actual := ""
 				switch test.methodName {
 				case "Err":
-					actual = l.entry.Error
-
+					actual = entry.E
 				case "RequestID":
-					actual = l.entry.RequestID
+					actual = entry.ReqID
 				case "TraceID":
-					actual = l.entry.TraceID
+					actual = entry.TrcID
 				case "SpanID":
-					actual = l.entry.SpanID
+					actual = entry.SpnID
 				case "Data":
 					var ok bool
 					var val interface{}
 
-					if val, ok = l.entry.Data[testDataKey]; !ok {
+					if val, ok = entry.D[testDataKey]; !ok {
 						t.Errorf("Expected key %s not set in the data field", testDataKey)
 					}
 
@@ -79,7 +103,7 @@ func TestLogger(t *testing.T) {
 				}
 
 				if actual != test.expected {
-					t.Errorf("Expected %s but got %s on method %s", test.expected, l.entry.Error, test.methodName)
+					t.Errorf("Expected %s but got %s on method %s", test.expected, actual, test.methodName)
 				}
 			})
 		}
@@ -87,7 +111,7 @@ func TestLogger(t *testing.T) {
 	})
 
 	t.Run("test print methods", func(t *testing.T) {
-		l := &logger{}
+		l := logEntry{}
 
 		tests := []struct {
 			name     string
@@ -126,7 +150,7 @@ func TestLogger(t *testing.T) {
 				SetLogFormat(LogFormatInlineString)
 				SetLogLevel(LogLevelDebug)
 
-				buf := &bytes.Buffer{}
+				buf := &mutexBuffer{}
 				SetOutput(buf)
 
 				test.logFunc(test.input)
@@ -137,5 +161,31 @@ func TestLogger(t *testing.T) {
 				}
 			})
 		}
+	})
+
+	t.Run("test race condition", func(t *testing.T) {
+		l := logEntry{}
+		buf := &mutexBuffer{}
+		SetOutput(buf)
+
+		var wg sync.WaitGroup
+
+		for i := 0; i < 50; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+
+				l.Data("key", "val").Info("info msg")
+			}()
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+
+				l.Err(errors.New("error")).Error("error msg")
+			}()
+		}
+
+		wg.Wait()
 	})
 }
