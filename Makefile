@@ -6,13 +6,13 @@ dep: ## Get the dependencies + remove unused ones
 	@go mod download
 
 lint: ## Lint Golang files
-	@golint -set_exit_status $(PKG_LIST)
+	@golangci-lint run --timeout=30m0s
 
 test: ## Run tests
 	@go test -race -v $(PKG_LIST)
 
 test-coverage: ## Run tests with coverage
-	@go test -race -short -coverprofile coverage.txt -covermode=atomic ${PKG_LIST}
+	@go test -race -coverprofile coverage.txt -covermode=atomic ${PKG_LIST}
 
 test-coverage-tool: test-coverage ## Run test coverage followed by the cover tool
 	@go tool cover -func=coverage.txt
