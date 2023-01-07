@@ -17,12 +17,34 @@ func TestStrToLogLevel(t *testing.T) {
 		{"error", LogLevelError},
 		{"fatal", LogLevelFatal},
 		{"invalid", LogLevelDebug},
+		{"", LogLevelDebug},
 	}
 
 	for _, test := range tests {
 		result := StrToLogLevel(test.input)
 		if result != test.expected {
 			t.Errorf("StrToLogLevel(%q) = %d, expected %d", test.input, result, test.expected)
+		}
+	}
+}
+
+func TestStrToLogFormat(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected LogFormat
+	}{
+		{"inline-string", LogFormatInlineString},
+		{"json", LogFormatJSON},
+		{"INLINE-STRING", LogFormatInlineString},
+		{"JSON", LogFormatJSON},
+		{"", LogFormatInlineString},
+		{"invalid", LogFormatInlineString},
+	}
+
+	for _, test := range tests {
+		result := StrToLogFormat(test.input)
+		if result != test.expected {
+			t.Errorf("StrToLogFormat(%q) = %v, expected %v", test.input, result, test.expected)
 		}
 	}
 }
@@ -85,6 +107,11 @@ func TestSetLogLevel(t *testing.T) {
 			name:     "fatal level",
 			level:    LogLevelFatal,
 			expected: LogLevelFatal,
+		},
+		{
+			name:     "invalid level",
+			level:    LogLevelFatal + 1,
+			expected: LogLevelDebug,
 		},
 	}
 
